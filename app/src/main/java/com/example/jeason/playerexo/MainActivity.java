@@ -3,6 +3,8 @@ package com.example.jeason.playerexo;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -16,18 +18,35 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
     private boolean playWhenReady = true;
     private int currentWindow;
     private long playbackPosition;
+    private List<String> words;
+    private static final int WORD_LIST_ITEMS = 150;
+    private WordAdapter mWordAdapter;
+    private RecyclerView mWordList;
+    private LinearLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         playerView = findViewById(R.id.playerView);
+        mWordList = findViewById(R.id.recyclerView);
+        initializeRecyclerView();
+    }
+
+    private void initializeRecyclerView() {
+        layoutManager = new LinearLayoutManager(this);
+        mWordList.setLayoutManager(layoutManager);
+        mWordList.setHasFixedSize(true);
+        mWordAdapter = new WordAdapter(WORD_LIST_ITEMS);
+        mWordList.setAdapter(mWordAdapter);
     }
 
     private void initializePlayer() {
