@@ -32,9 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private int currentWindow;
     private long playbackPosition;
     private RecyclerView mWordList;
-    private int scrollPosition = 0;
-    private Button button;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,15 +39,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         playerView = findViewById(R.id.playerView);
         initializeRecyclerView();
-//        button = findViewById(R.id.buttonScroll);
 
     }
 
-    public void scrollButton(View view) {
-        mWordList.smoothScrollToPosition(scrollPosition);
-        scrollPosition = scrollPosition + 1;
-        button.setText(String.valueOf(scrollPosition));
-    }
 
     private void initializeRecyclerView() {
         mWordList = findViewById(R.id.recyclerView);
