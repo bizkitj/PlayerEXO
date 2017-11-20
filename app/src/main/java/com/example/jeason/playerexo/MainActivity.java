@@ -1,10 +1,16 @@
 package com.example.jeason.playerexo;
 
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -18,35 +24,58 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity {
+    public static final String TAG = "MainActivity";
     private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
     private boolean playWhenReady = true;
     private int currentWindow;
     private long playbackPosition;
-    private List<String> words;
-    private static final int WORD_LIST_ITEMS = 150;
-    private WordAdapter mWordAdapter;
     private RecyclerView mWordList;
-    private LinearLayoutManager layoutManager;
+    private int scrollPosition = 0;
+    private Button button;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         playerView = findViewById(R.id.playerView);
-        mWordList = findViewById(R.id.recyclerView);
         initializeRecyclerView();
+//        button = findViewById(R.id.buttonScroll);
+
+    }
+
+    public void scrollButton(View view) {
+        mWordList.smoothScrollToPosition(scrollPosition);
+        scrollPosition = scrollPosition + 1;
+        button.setText(String.valueOf(scrollPosition));
     }
 
     private void initializeRecyclerView() {
-        layoutManager = new LinearLayoutManager(this);
+        mWordList = findViewById(R.id.recyclerView);
+        String[] words = getResources().getStringArray(R.array.all_words);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(1);
         mWordList.setLayoutManager(layoutManager);
+        mWordList.setAdapter(new WordAdapter(words));
         mWordList.setHasFixedSize(true);
-        mWordAdapter = new WordAdapter(WORD_LIST_ITEMS);
-        mWordList.setAdapter(mWordAdapter);
+        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(
+                this, DividerItemDecoration.VERTICAL);
+        mWordList.addItemDecoration(itemDecoration);
+        mWordList.setItemAnimator(new DefaultItemAnimator());
+//findLastVisibleItemPosition from the RecyclerView
+        mWordList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
+                Log.v(TAG, "lastVisibleItemPosition: " + String.valueOf(lastVisibleItemPosition));
+                mWordList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+//        scrollPosition = scrollPosition + lastVisibleItemPosition;
+
     }
 
     private void initializePlayer() {

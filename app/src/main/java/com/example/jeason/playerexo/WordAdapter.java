@@ -13,10 +13,14 @@ import android.widget.TextView;
  */
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
-    private int mNumberItems;
+    private String[] wordLines;
 
-    public WordAdapter(int numberOfItems) {
-        mNumberItems = numberOfItems;
+    public interface ListItemClickListener {
+
+    }
+
+    public WordAdapter(String[] wordLines) {
+        this.wordLines = wordLines;
     }
 
     /**
@@ -45,9 +49,7 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         int row_layout = R.layout.row_layout;
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(row_layout, parent, false);
-        WordViewHolder viewHolder = new WordViewHolder(view);
-        viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.colorItem));
-        return viewHolder;
+        return new WordViewHolder(view);
     }
 
     /**
@@ -72,8 +74,9 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
      */
     @Override
     public void onBindViewHolder(WordViewHolder holder, int position) {
-        holder.bind(position);
-
+        String wordsToDisplay = wordLines[position];
+        holder.wordItemTextView.setText(wordsToDisplay);
+//        Log.v("onBindViewHolder Pos: ", String.valueOf(position));
     }
 
     /**
@@ -83,9 +86,13 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
      */
     @Override
     public int getItemCount() {
-        return mNumberItems;
-    }
+        if (null == wordLines) {
+            return 0;
+        } else {
+            return wordLines.length;
+        }
 
+    }
 
     class WordViewHolder extends RecyclerView.ViewHolder {
         TextView wordItemTextView;
@@ -95,8 +102,11 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
             wordItemTextView = itemView.findViewById(R.id.wordItemView);
         }
 
-        public void bind(int position) {
-            wordItemTextView.setText(String.valueOf(position));
-        }
+
+    }
+
+    public void setWordLines(String[] allWordLines) {
+        wordLines = allWordLines;
+        notifyDataSetChanged();
     }
 }

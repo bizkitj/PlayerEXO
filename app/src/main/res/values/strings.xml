@@ -2,4 +2,32 @@
     <string name="app_name">PlayerEXO</string>
     <string name="media_url">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
     <string name="media_text">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
+    <string-array name="all_words">
+        <item>大学之道</item>
+        <item>在明明德</item>
+        <item>在亲民</item>
+        <item>在止于至善</item>
+        <item>知止而後有定</item>        　　
+        <item>定而後能静</item>        　　
+        <item>静而後能安</item>        　　
+        <item>安而後能虑</item>        　　
+        <item>虑而後能得</item>
+        <item>物有本末</item>
+        <item>事有终始</item>
+        <item>知所先後</item>
+        <item>则近道矣</item>
+        <item>古之欲明明德于天下者</item>        　　
+        <item>先治其国</item>        　　
+        <item>欲治其国者</item>        　　
+        <item>先齐其家</item>        　　
+        <item>欲齐其家者</item>
+        <item>先修其身</item>
+        <item>欲修其身者</item>
+        <item>先正其心</item>
+        <item>欲正其心者</item>
+        <item>先诚其意</item>
+        <item>欲诚其意者</item>
+        <item>先致其知</item>
+        <item>致知在格物</item>
+    </string-array>
 </resources>
