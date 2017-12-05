@@ -1,6 +1,8 @@
 package com.example.jeason.playerexo;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +15,18 @@ import android.widget.TextView;
  */
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
-    private String[] wordLines;
+    private String[] simplifiedChinese;
+    private int selectedPosition = -1;
+    private Context context;
+    private int rowHighlightUpdateTracker;
+    private String[] pinYin;
+    private String[] english;
 
-    public interface ListItemClickListener {
-
-    }
-
-    public WordAdapter(String[] wordLines) {
-        this.wordLines = wordLines;
+    public WordAdapter(String[] simplifiedChinese, Context context, String[] pinYin, String[] english) {
+        this.simplifiedChinese = simplifiedChinese;
+        this.pinYin = pinYin;
+        this.english = english;
+        this.context = context;
     }
 
     /**
@@ -74,9 +80,29 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
      */
     @Override
     public void onBindViewHolder(WordViewHolder holder, int position) {
-        String wordsToDisplay = wordLines[position];
-        holder.wordItemTextView.setText(wordsToDisplay);
-//        Log.v("onBindViewHolder Pos: ", String.valueOf(position));
+        //region Content to display
+        String simplifiedChineseCharacterToDisplay = simplifiedChinese[position];
+        String pinYinToDisplay = pinYin[position];
+        String englishToDisplay = english[position];
+        //endregion
+        //region Content Holder
+        holder.simplifiedChineseCharacter.setText(simplifiedChineseCharacterToDisplay);
+        holder.chinesePinYin.setText(pinYinToDisplay);
+        holder.english.setText(englishToDisplay);
+        //endregion
+        holder.idTextView.setText(String.valueOf(position));
+        //region Highlight selected item.
+        holder.itemView.setBackgroundColor(selectedPosition == position ? ContextCompat.getColor(context, R.color.accent) : Color.TRANSPARENT);
+//        holder.simplifiedChineseCharacter.setTextColor(selectedPosition == position ? ContextCompat.getColor(context, R.color.icons) :
+//                ContextCompat.getColor(context, R.color.primary));
+        //endregion
+        //region Highlight item
+        holder.simplifiedChineseCharacter.setTextColor(position == rowHighlightUpdateTracker ? ContextCompat.getColor(context, R.color.colorHighlightedText) : ContextCompat.getColor(context, R.color.primary_text));
+        //endregion
+    }
+
+    public void setRowHighlightUpdateTracker(int rowHighlightUpdateTracker) {
+        this.rowHighlightUpdateTracker = rowHighlightUpdateTracker;
     }
 
     /**
@@ -86,27 +112,39 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
      */
     @Override
     public int getItemCount() {
-        if (null == wordLines) {
+        if (null == simplifiedChinese) {
             return 0;
         } else {
-            return wordLines.length;
+            return simplifiedChinese.length;
         }
 
     }
 
-    class WordViewHolder extends RecyclerView.ViewHolder {
-        TextView wordItemTextView;
+    class WordViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
+        TextView simplifiedChineseCharacter, idTextView, chinesePinYin, english;
 
         public WordViewHolder(View itemView) {
             super(itemView);
-            wordItemTextView = itemView.findViewById(R.id.wordItemView);
+            itemView.setOnLongClickListener(this);
+            simplifiedChineseCharacter = itemView.findViewById(R.id.simplifiedChineseItemView);
+            chinesePinYin = itemView.findViewById(R.id.ChinesePinYin);
+            english = itemView.findViewById(R.id.english);
+            idTextView = itemView.findViewById(R.id.lineID);
         }
 
+        @Override
+        public boolean onLongClick(View view) {
+            // Below line is just like a safety check, because sometimes holder could be null,
+            // in that case, getAdapterPosition() will return RecyclerView.NO_POSITION
+            if (getAdapterPosition() == RecyclerView.NO_POSITION) return false;
+            // Updating old as well as new positions
+            notifyItemChanged(selectedPosition);
 
+            selectedPosition = getAdapterPosition();
+            notifyItemChanged(selectedPosition);
+            // Do your another stuff for your onClick
+            return true;
+        }
     }
 
-    public void setWordLines(String[] allWordLines) {
-        wordLines = allWordLines;
-        notifyDataSetChanged();
-    }
 }

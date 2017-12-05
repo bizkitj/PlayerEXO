@@ -4,13 +4,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -26,50 +26,74 @@ import com.google.android.exoplayer2.util.Util;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
-    private SimpleExoPlayerView playerView;
     private SimpleExoPlayer player;
     private boolean playWhenReady = true;
     private int currentWindow;
     private long playbackPosition;
     private RecyclerView mWordList;
+    private Button testButton;
+    private WordAdapter mAdapter;
+    private TextView currentPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        playerView = findViewById(R.id.playerView);
         initializeRecyclerView();
-
+        highlightItemUpdate();
     }
-
 
     private void initializeRecyclerView() {
         mWordList = findViewById(R.id.recyclerView);
-        String[] words = getResources().getStringArray(R.array.all_words);
+        String[] simplifiedChineseRowItem = getResources().getStringArray(R.array.simplifiedChinese);
+        String[] chinesePinYinRowItem = getResources().getStringArray(R.array.ChinesePinYin);
+        String[] englishRowItem = getResources().getStringArray(R.array.English);
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(1);
+        mAdapter = new WordAdapter(simplifiedChineseRowItem, this, chinesePinYinRowItem, englishRowItem);
         mWordList.setLayoutManager(layoutManager);
-        mWordList.setAdapter(new WordAdapter(words));
+        mWordList.setAdapter(mAdapter);
         mWordList.setHasFixedSize(true);
-        RecyclerView.ItemDecoration itemDecoration = new DividerItemDecoration(
-                this, DividerItemDecoration.VERTICAL);
+        SeparatorDecoration itemDecoration = new SeparatorDecoration(
+                this, getResources().getColor(R.color.divider), 0.5f);
         mWordList.addItemDecoration(itemDecoration);
         mWordList.setItemAnimator(new DefaultItemAnimator());
-//findLastVisibleItemPosition from the RecyclerView
+        /*
+        findLastVisibleItemPosition from the RecyclerView
+         */
         mWordList.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                int lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition();
-                Log.v(TAG, "lastVisibleItemPosition: " + String.valueOf(lastVisibleItemPosition));
+                int lastCompletelyVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition();
+                Log.v(TAG, "lastCompletelyVisibleItem: " + String.valueOf(lastCompletelyVisibleItem));
                 mWordList.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-
 //        scrollPosition = scrollPosition + lastVisibleItemPosition;
 
     }
 
+    private void highlightItemUpdate() {
+        testButton = findViewById(R.id.testButton);
+        currentPosition = findViewById(R.id.currentPosition);
+        final int[] highlightItem = {0};
+        testButton.setText(String.valueOf(highlightItem[0]));
+//        currentPosition.setText(String.valueOf(player.getCurrentPosition()));
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                highlightItem[0]++;
+                mAdapter.setRowHighlightUpdateTracker(highlightItem[0]);
+                testButton.setText(String.valueOf(highlightItem[0]));
+//                currentPosition.setText(String.valueOf(player.getCurrentPosition()));
+                mAdapter.notifyDataSetChanged();
+            }
+        });
+
+    }
+
     private void initializePlayer() {
+        SimpleExoPlayerView playerView = findViewById(R.id.playerView);
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(
                     new DefaultRenderersFactory(this),
@@ -81,9 +105,15 @@ public class MainActivity extends AppCompatActivity {
         }
         MediaSource mediaSource = buildMediaSource(Uri.parse(getString(R.string.media_url)));
         player.prepare(mediaSource, true, false);
-
-
+//        player.sendMessages();
     }
+
+    private void updateProgressBar() {
+        long duration = player == null ? 0 : player.getDuration();
+        long position = player == null ? 0 : player.getCurrentPosition();
+    }
+
+
 
     private MediaSource buildMediaSource(Uri uri) {
         return new ExtractorMediaSource(uri,

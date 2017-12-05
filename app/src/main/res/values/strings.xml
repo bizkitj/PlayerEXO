@@ -2,32 +2,140 @@
     <string name="app_name">PlayerEXO</string>
     <string name="media_url">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
     <string name="media_text">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
-    <string-array name="all_words">
-        <item>大学之道</item>
-        <item>在明明德</item>
-        <item>在亲民</item>
-        <item>在止于至善</item>
-        <item>知止而後有定</item>        　　
-        <item>定而後能静</item>        　　
-        <item>静而後能安</item>        　　
-        <item>安而後能虑</item>        　　
-        <item>虑而後能得</item>
-        <item>物有本末</item>
-        <item>事有终始</item>
-        <item>知所先後</item>
-        <item>则近道矣</item>
-        <item>古之欲明明德于天下者</item>        　　
-        <item>先治其国</item>        　　
-        <item>欲治其国者</item>        　　
-        <item>先齐其家</item>        　　
-        <item>欲齐其家者</item>
-        <item>先修其身</item>
-        <item>欲修其身者</item>
-        <item>先正其心</item>
-        <item>欲正其心者</item>
-        <item>先诚其意</item>
-        <item>欲诚其意者</item>
-        <item>先致其知</item>
-        <item>致知在格物</item>
+    <string-array name="simplifiedChinese">
+        <item>南无楞严会上佛菩萨</item>
+        <item>南无楞严会上佛菩萨</item>
+        <item>南无楞严会上佛菩萨</item>
+        <item>妙湛总持不动尊</item>
+        <item>首楞严王世稀有</item>
+        <item>销我亿劫颠倒想</item>
+        <item>不历僧祇或法身</item>
+        <item>愿今得果成宝王</item>
+        <item>还度如是恒沙众</item>
+        <item>将此身心奉尘刹</item>
+        <item>是则名为报佛恩</item>
+        <item>伏请世尊为证明</item>
+        <item>五浊恶世誓先入</item>
+        <item>如一众生未成佛</item>
+        <item>终不于此取泥洹</item>
+        <item>大雄大力大慈悲</item>
+        <item>希更审除微细惑</item>
+        <item>令我早登无上觉</item>
+        <item>于十方界坐道场</item>
+        <item>舜若多性可消亡</item>
+        <item>烁迦罗心无动转</item>
+        <item>南无常住十方佛</item>
+        <item>南无常住十方法</item>
+        <item>南无常住十方僧</item>
+        <item>南无释迦摩尼佛</item>
+        <item>南无佛顶首楞严</item>
+        <item>南无观世音菩萨</item>
+        <item>南无金刚藏菩萨</item>
+        <item>尔时世尊</item>
+        <item>从肉髻中</item>
+        <item>涌百宝光 </item>
+        <item>光中涌出 千叶宝莲</item>
+        <item>有化如来 坐宝华中</item>
+        <item>顶放十道 百宝光明</item>
+        <item>一一光明 皆遍示现 十恒河沙</item>
+        <item>金刚密迹 擎山持杵 遍虚空界</item>
+        <item>大众仰观 畏爱兼报</item>
+        <item>求佛哀佑 一心听佛</item>
+        <item>无见顶相 </item>
+        <item>放光如来 宣说神咒</item>
+        <!--Surangama Mantra-->
+        <item></item>
     </string-array>
+
+    <string-array name="ChinesePinYin">
+        <!--preface-->
+        <item> ná mó léng yán huì shàng fó pú sà </item>
+        <item> ná mó léng yán huì shàng fó pú sà </item>
+        <item> ná mó léng yán huì shàng fó pú sà </item>
+        <item> miào zhàn zŏng chí bù dòng zūn </item>
+        <item> shŏu léng yán wáng shì xī yŏu  </item>
+        <item> xiāo wŏ yì jié diān dăo xiăng </item>
+        <item> bù lì sēng qí huò fă shēn</item>
+        <item> yuàn jīn dé guŏ chéng băo wáng </item>
+        <item> huán dù rú shì héng shā zhòng </item>
+        <item> jiāng cĭ shēn xīn fèng chén chà </item>
+        <item> shì zé míng wéi bào fó ēn </item>
+        <item> fú qĭng shì zūn wéi zhèng míng </item>
+        <item> wŭ zhuó è shì shì xiān rù </item>
+        <item> rú yī zhòng shēng wèi chéng fó </item>
+        <item> zhōng bù yú cĭ qŭ ní huán </item>
+        <item> dà xióng dà lì dà cí bēi </item>
+        <item> xī gèng shĕn chú wēi xì huò </item>
+        <item> lìng wŏ zăo dēng wú shàng jué </item>
+        <item> yú shí fāng jiè zuò dào chăng </item>
+        <item> shùn ruò duō xìng kĕ xiāo wáng </item>
+        <item> shuò jiā luó xīn wú dòng zhuăn </item>
+        <item> ná mó cháng zhù shí fāng fó </item>
+        <item> ná mó cháng zhù shí fāng fă </item>
+        <item> ná mó cháng zhù shí fāng sēng </item>
+        <item> ná mó shì jiā móu ní fó </item>
+        <item> ná mó fó dĭng shŏu léng yán </item>
+        <item> ná mó guān shì yīn pú sà </item>
+        <item> ná mó jīn gāng zàng pú sà </item>
+        <item> ĕr shí shì zūn </item>
+        <item> cóng ròu jì zhōng </item>
+        <item> yŏng bái băo guāng </item>
+        <item> guāng zhōng yŏng chū qiān yè băo lián</item>
+        <item> yŏu huà rú lái zuò băo huá zhōng</item>
+        <item> dĭng fàng shí dào băi băo guāng míng</item>
+        <item> yī yī guāng míng jiē biàn shì xiàn shí héng hé shā</item>
+        <item> jīn gāng mì jī qíng shān chí chŭ biàn xū kōng jiè</item>
+        <item> dà zhòng yăng guān wèi ài jiān bào</item>
+        <item> qiú fó āi yòu yī xīn tīng fó</item>
+        <item> wú jiàn dĭng xiàng </item>
+        <item> fàng guāng rú lái xuān shuō shén zhòu</item>
+        <!--Surangama Mantra-->
+    </string-array>
+
+    <string-array name="English">
+        <!--prefrace-->
+        <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
+        <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
+        <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
+        <item> O deep and wondrous dharani unmoving Honored One </item>
+        <item> Supreme Surangama appears most rarely in the world. </item>
+        <item> Extinguishing deluded thoughts from countless kalpas past </item>
+        <item> I need not pass through aeons till the Dharma body\'s gained. </item>
+        <item> I wish to now attain the Way: and as the Dharma King. </item>
+        <item> I will then return to rescue beings more than Ganges\' sands. </item>
+        <item> This deep resolve I offer to the myriad Buddhas\' lands, </item>
+        <item> And thus endeavor to repay the Buddha\'s boundless grace. </item>
+        <item> I humbly ask the Bhagavan to certify my quest: </item>
+        <item> To enter first the evil world --- the five turbidities; </item>
+        <item> If yet a single being\'s not accomplished Buddhahood </item>
+        <item> Accordingly I also must renounce Nirvana\'s bliss. </item>
+        <item> O great in courage, great in power, great compassionate one! </item>
+        <item> I pray would now uncover and dispel my subtlest doubts. </item>
+        <item> Thus cause me quickly to attain supreme enlightment, </item>
+        <item> And sit within the Bodhimandas of the tenfold realms </item>
+        <item> And even could the nature of sunyata melt away </item>
+        <item> My vajra-like supreme resolve would still remain unmoved. </item>
+        <item> Namo Eternally Abiding Buddhas of the Ten Directions. </item>
+        <item> Namo Eternally Abiding Dharma of the Ten Directions. </item>
+        <item> Namo Eternally Abiding Sangha of the Ten Directions. </item>
+        <item> Namo Sakyamuni Buddha. </item>
+        <item> Namo Supreme Surangama of the Buddha\'s summit. </item>
+        <item> Namo Guan Shi Yin Bodhisattva. </item>
+        <item> Namo Vajra Treasury Bodhisattva. </item>
+        <item> At that time the World Honored One </item>
+        <item> From the flesh mound at the crown of His head</item>
+        <item> Released a hundred-jeweled light </item>
+        <item> And a thousand petalled rare lotus arose from the midst of the light. </item>
+        <item> Seated within the precious flower was a transformation body of Thus Come One</item>
+        <item> Whose crown in turn emitted ten rays of the hundred-jeweled effulgence. </item>
+        <item> All the myriad lights shone round about everywhere revealing Secret Trace Vajra Spirits, many as the sands of the ten Ganges rivers.</item>
+        <item> Each holding aloft a mountain and wielding a pestle,they pervaded the realm of empty space. </item>
+        <item> The great assembly gazed upward at once filled with fear and admiration.</item>
+        <item> Seeking the Buddha\'s kind protection, they single-mindedly listened </item>
+        <item> As, streaming light at the Buddha\'s invisible crown </item>
+        <item> The transformation Thus Come One proclaimed the spiritual mantra: </item>
+        <!--Surangama Mantra-->
+    </string-array>
+
+
 </resources>
