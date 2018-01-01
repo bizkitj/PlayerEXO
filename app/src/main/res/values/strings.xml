@@ -3,6 +3,7 @@
     <string name="media_url">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
     <string name="media_text">http://mp3.drbachinese.org/online_audio/chants/LengYanZhou_XueXiBan_DRBA.mp3</string>
     <string-array name="simplifiedChinese">
+        <item>楞严咒</item>
         <item>南无楞严会上佛菩萨</item>
         <item>南无楞严会上佛菩萨</item>
         <item>南无楞严会上佛菩萨</item>
@@ -44,18 +45,31 @@
         <item>无见顶相 </item>
         <item>放光如来 宣说神咒</item>
         <!--Surangama Mantra-->
-        <item></item>
+        <item>南无萨怛他 苏伽多耶</item>
+        <item>阿罗诃帝 三藐三菩陀写</item>
+        <item>南无萨怛他</item>
+        <item>佛陀俱胝瑟尼钐</item>
+        <item>南无萨婆 勃陀勃地</item>
+        <item>萨跢鞞弊</item>
+        <item>南无萨多南 三藐三菩陀</item>
+        <item>俱知喃</item>
+        <item>娑舍啰婆迦 僧伽喃</item>
+        <item>南无卢鸡阿罗汉哆喃</item>
+        <item>南无苏卢多波那喃</item>
+        <item>南无娑羯唎陀伽弥喃</item>
+        <item>南无卢鸡三藐伽哆喃</item>
     </string-array>
 
     <string-array name="ChinesePinYin">
         <!--preface-->
+        <item> léng yán zhòu</item>
         <item> ná mó léng yán huì shàng fó pú sà </item>
         <item> ná mó léng yán huì shàng fó pú sà </item>
         <item> ná mó léng yán huì shàng fó pú sà </item>
         <item> miào zhàn zŏng chí bù dòng zūn </item>
         <item> shŏu léng yán wáng shì xī yŏu  </item>
         <item> xiāo wŏ yì jié diān dăo xiăng </item>
-        <item> bù lì sēng qí huò fă shēn</item>
+        <item> bù lì sēng qí huò fă shēn </item>
         <item> yuàn jīn dé guŏ chéng băo wáng </item>
         <item> huán dù rú shì héng shā zhòng </item>
         <item> jiāng cĭ shēn xīn fèng chén chà </item>
@@ -90,10 +104,15 @@
         <item> wú jiàn dĭng xiàng </item>
         <item> fàng guāng rú lái xuān shuō shén zhòu</item>
         <!--Surangama Mantra-->
+        <item> ná mó sà dàn tuō sū qié duō yē </item>
+        <item> ā là hē dì sān miăo sān pú tuó xiĕ</item>
+        <item> ná mó sà dàn tuō</item>
+        <item> fó tuó jù zhī sè ní shàn</item>
     </string-array>
 
     <string-array name="English">
         <!--prefrace-->
+        <item> Surangama Mantra</item>
         <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
         <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
         <item> Namo Surangama Assembly of Buddhas and Bodhisattvas </item>
@@ -135,6 +154,10 @@
         <item> As, streaming light at the Buddha\'s invisible crown </item>
         <item> The transformation Thus Come One proclaimed the spiritual mantra: </item>
         <!--Surangama Mantra-->
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 
 
