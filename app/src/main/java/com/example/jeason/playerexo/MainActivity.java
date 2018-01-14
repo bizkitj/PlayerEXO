@@ -17,12 +17,17 @@ import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
+import com.google.android.exoplayer2.audio.SimpleDecoderAudioRenderer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import org.json.JSONArray;
@@ -36,13 +41,25 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
+    private static final int FIRST_ASSEMBLY_CN = 300404;
+    private static final int SECOND_ASSEMBLY_CN = 858362;
+    private static final int THIRD_ASSEMBLY_CN = 961219;
+    private static final int FOURTH_ASSEMBLY_CN = 1272504;
+    private static final int FIFTH_ASSEMBLY_CN = 1473297;
+    private static final int MANTRA_HEART_CN = 1736345;
+    private static final int FIRST_ASSEMBLY_Sanskrit = 4841;
+    private static final int SECOND_ASSEMBLY_sanskrit = 354395;// 354395.126984127;
+    private static final int THIRD_ASSEMBLY_sanskrit = 457939;//457939.615079365;
+    private static final int FOURTH_ASSEMBLY_sanskrit = 692168;//692168.98015873;
+    private static final int FIFTH_ASSEMBLY_sanskrit = 880580;// 880580.472222222;
+    private static final int MANTRA_HEART_sanskrit = 1090716;
     private final Handler updateCurrentPostionHandler = new Handler();
     private SimpleExoPlayer player;
     private boolean playWhenReady = true;
     private int currentWindow;
     private long playbackPosition;
     private RecyclerView mWordList;
-    private Button chapterOne, chapterTwo, chapterThree, chapterFour, chapterFive,mantraEssence;
+    private Button chapterOne, chapterTwo, chapterThree, chapterFour, chapterFive, mantraEssence;
     private WordAdapter mAdapter;
     private int mediaCurrentPositionInSecond;
     private LinearLayoutManager layoutManager;
@@ -59,9 +76,10 @@ public class MainActivity extends AppCompatActivity {
             //test code of progressing the Mantra
             mediaCurrentPositionInSecond = (int) Math.round(mediaCurrentPosition / 1000.0);
             Log.v(TAG, "CurrentPos in second " + String.valueOf(mediaCurrentPositionInSecond));
-            updateCurrentPostionHandler.postDelayed(this, 1000);
             //progress the Mantra
             updateHighlightItem();
+            updateCurrentPostionHandler.postDelayed(this, 1000);
+
         }
     };
 
@@ -74,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
             int storedPosition = subtitlePosItemMap.get(indexOfValue);
             Log.v(TAG, "storedPosition " + String.valueOf(storedPosition));
             mWordList.smoothScrollToPosition(indexOfValue);
+//            mWordList.scrollToPosition(indexOfValue);
         }
     }
 
@@ -92,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         chapterOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(300404);
+                player.seekTo(FIRST_ASSEMBLY_Sanskrit);
 //                mediaCurrentPositionInSecond = (int) Math.round(300404 / 1000.0);
             }
         });
@@ -100,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         chapterTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(858362);
+                player.seekTo(SECOND_ASSEMBLY_sanskrit);
 
             }
         });
@@ -108,28 +127,28 @@ public class MainActivity extends AppCompatActivity {
         chapterThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(961219);
+                player.seekTo(THIRD_ASSEMBLY_sanskrit);
             }
         });
         chapterFour = findViewById(R.id.buttonFour);
         chapterFour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(1272504);
+                player.seekTo(FOURTH_ASSEMBLY_sanskrit);
             }
         });
         chapterFive = findViewById(R.id.buttonFive);
         chapterFive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(1473297);
+                player.seekTo(FIFTH_ASSEMBLY_sanskrit);
             }
         });
         mantraEssence = findViewById(R.id.buttonMantraEssence);
         mantraEssence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                player.seekTo(1736345);
+                player.seekTo(MANTRA_HEART_sanskrit);
             }
         });
     }
@@ -144,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 long lineStartPostion = object.getLong("startTime");
                 Double postionInSecond = lineStartPostion / 1000.0;
                 mantraLinesSimplifiedCN.add(object.getString("content"));
-                mantraLinesSimplifiedCNPinYin.add(object.getString("CHN_PINYIN"));
+//                mantraLinesSimplifiedCNPinYin.add(object.getString("CHN_PINYIN"));
                 subTitlePosition.add((int) Math.round(postionInSecond));
                 //Map position with counter
                 subtitlePosItemMap.append(i, (int) Math.round(postionInSecond));
@@ -176,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
         mWordList = findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(1);
-        mAdapter = new WordAdapter(mantraLinesSimplifiedCN, this, mantraLinesSimplifiedCNPinYin);
+        mAdapter = new WordAdapter(mantraLinesSimplifiedCN, this);
         mWordList.setLayoutManager(layoutManager);
         mWordList.setAdapter(mAdapter);
         mWordList.setHasFixedSize(true);
@@ -184,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
                 this, getResources().getColor(R.color.divider), 0.5f);
         mWordList.addItemDecoration(itemDecoration);
         mWordList.setItemAnimator(new DefaultItemAnimator());
-//        scrollPosition = scrollPosition + lastVisibleItemPosition;
 
     }
 
@@ -207,13 +225,36 @@ public class MainActivity extends AppCompatActivity {
                     new DefaultRenderersFactory(this),
                     new DefaultTrackSelector(),
                     new DefaultLoadControl());
+
             playerView.setPlayer(player);
             player.setPlayWhenReady(playWhenReady);
             player.seekTo(currentWindow, playbackPosition);
         }
-        MediaSource mediaSource = buildMediaSource(Uri.parse(getString(R.string.media_url)));
+//        MediaSource mediaSource = buildMediaSource(Uri.parse(getString(R.string.shurangma_in_sanskrit)));//Chinese online mentra
+        MediaSource mediaSource = localMediaSource();//local sanskrit
         player.prepare(mediaSource, true, false);
 //        player.sendMessages();
+    }
+
+    private MediaSource localMediaSource() {
+        Uri uri = RawResourceDataSource.buildRawResourceUri(R.raw.shurangama_in_sanskrit_audio);
+        DataSpec dataSpec = new DataSpec(uri);
+        final RawResourceDataSource rawResourceDataSource = new RawResourceDataSource(this);
+        ExtractorMediaSource mediaSource = null;
+        try {
+            rawResourceDataSource.open(dataSpec);
+            DataSource.Factory factory = new DataSource.Factory() {
+                @Override
+                public DataSource createDataSource() {
+                    return rawResourceDataSource;
+                }
+            };
+            mediaSource = new ExtractorMediaSource(rawResourceDataSource.getUri(),
+                    factory, new DefaultExtractorsFactory(), null, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return mediaSource;
     }
 
     private MediaSource buildMediaSource(Uri uri) {
@@ -228,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
         if (Util.SDK_INT > 23) {
             initializePlayer();
         }
+        updateCurrentPostionHandler.post(updateMediaCurrentPositionRunnable);
 
     }
 
@@ -238,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
             initializePlayer();
         }
         if (jSonStringFromAsset == null) {
-            jSonStringFromAsset = loadJsonFromAsset(getResources().openRawResource(R.raw.lengyanzhou_xuexiban_drba_all));
+//            jSonStringFromAsset = loadJsonFromAsset(getResources().openRawResource(R.raw.lengyanzhou_xuexiban_drba_all));
+            jSonStringFromAsset = loadJsonFromAsset(getResources().openRawResource(R.raw.shurangama_in_sanskrit));
             parseJsonFile(jSonStringFromAsset);
             updateCurrentPostionHandler.post(updateMediaCurrentPositionRunnable);
         }

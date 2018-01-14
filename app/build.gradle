@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
+
     defaultConfig {
         applicationId "com.example.jeason.playerexo"
         minSdkVersion 17
@@ -27,4 +28,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compile 'com.google.android.exoplayer:exoplayer:r2.5.4'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
+
 }

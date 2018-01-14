@@ -10,22 +10,24 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 /**
  * Created by Jeason on 2017/11/14.
  */
 
 public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder> {
-    private String[] simplifiedChinese;
+    private ArrayList<String> simplifiedChinese;
     private int selectedPosition = -1;
     private Context context;
     private int rowHighlightUpdateTracker;
-    private String[] pinYin;
-    private String[] english;
+//    private ArrayList<String> pinYin;
+//    private ArrayList<String> english;
 
-    public WordAdapter(String[] simplifiedChinese, Context context, String[] pinYin, String[] english) {
+    public WordAdapter(ArrayList<String> simplifiedChinese, Context context) {
         this.simplifiedChinese = simplifiedChinese;
-        this.pinYin = pinYin;
-        this.english = english;
+//        this.pinYin = pinYin;
+//        this.english = english;
         this.context = context;
     }
 
@@ -81,14 +83,14 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
     @Override
     public void onBindViewHolder(WordViewHolder holder, int position) {
         //region Content to display
-        String simplifiedChineseCharacterToDisplay = simplifiedChinese[position];
-        String pinYinToDisplay = pinYin[position];
-        String englishToDisplay = english[position];
+        String simplifiedChineseCharacterToDisplay = simplifiedChinese.get(position);
+//        String pinYinToDisplay = pinYin.get(position);
+//        String englishToDisplay = english.get(position);
         //endregion
         //region Content Holder
         holder.simplifiedChineseCharacter.setText(simplifiedChineseCharacterToDisplay);
-        holder.chinesePinYin.setText(pinYinToDisplay);
-        holder.english.setText(englishToDisplay);
+//        holder.chinesePinYin.setText(pinYinToDisplay);
+//        holder.english.setText(englishToDisplay);
         //endregion
         holder.idTextView.setText(String.valueOf(position));
         //region Highlight selected item.
@@ -115,20 +117,20 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
         if (null == simplifiedChinese) {
             return 0;
         } else {
-            return simplifiedChinese.length;
+            return simplifiedChinese.size();
         }
 
     }
 
     class WordViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
-        TextView simplifiedChineseCharacter, idTextView, chinesePinYin, english;
+        TextView simplifiedChineseCharacter, idTextView, chinesePinYin;
 
         public WordViewHolder(View itemView) {
             super(itemView);
             itemView.setOnLongClickListener(this);
             simplifiedChineseCharacter = itemView.findViewById(R.id.simplifiedChineseItemView);
-            chinesePinYin = itemView.findViewById(R.id.ChinesePinYin);
-            english = itemView.findViewById(R.id.english);
+//            chinesePinYin = itemView.findViewById(R.id.ChinesePinYin);
+//            english = itemView.findViewById(R.id.english);
             idTextView = itemView.findViewById(R.id.lineID);
         }
 
@@ -139,7 +141,6 @@ public class WordAdapter extends RecyclerView.Adapter<WordAdapter.WordViewHolder
             if (getAdapterPosition() == RecyclerView.NO_POSITION) return false;
             // Updating old as well as new positions
             notifyItemChanged(selectedPosition);
-
             selectedPosition = getAdapterPosition();
             notifyItemChanged(selectedPosition);
             // Do your another stuff for your onClick
