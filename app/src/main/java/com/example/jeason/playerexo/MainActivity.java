@@ -1,8 +1,16 @@
 package com.example.jeason.playerexo;
 
+import android.app.ActivityManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,18 +20,19 @@ import android.util.SparseIntArray;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.audio.MediaCodecAudioRenderer;
-import com.google.android.exoplayer2.audio.SimpleDecoderAudioRenderer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -38,9 +47,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "MainActivity";
+    public static final String TAG = MainActivity.class.getSimpleName();
     private static final int FIRST_ASSEMBLY_CN = 300404;
     private static final int SECOND_ASSEMBLY_CN = 858362;
     private static final int THIRD_ASSEMBLY_CN = 961219;
@@ -54,12 +64,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int FIFTH_ASSEMBLY_sanskrit = 880580;// 880580.472222222;
     private static final int MANTRA_HEART_sanskrit = 1090716;
     private final Handler updateCurrentPostionHandler = new Handler();
-    private SimpleExoPlayer player;
-    private boolean playWhenReady = true;
+    private ExoPlayer player;
+    private MediaPlayService mediaPlayService;
+    private boolean playWhenReady;
+    private boolean isFinished = false;
     private int currentWindow;
     private long playbackPosition;
     private RecyclerView mWordList;
-    private Button chapterOne, chapterTwo, chapterThree, chapterFour, chapterFive, mantraEssence;
     private WordAdapter mAdapter;
     private int mediaCurrentPositionInSecond;
     private LinearLayoutManager layoutManager;
@@ -75,22 +86,24 @@ public class MainActivity extends AppCompatActivity {
             long mediaCurrentPosition = player == null ? 0 : player.getCurrentPosition();
             //test code of progressing the Mantra
             mediaCurrentPositionInSecond = (int) Math.round(mediaCurrentPosition / 1000.0);
-            Log.v(TAG, "CurrentPos in second " + String.valueOf(mediaCurrentPositionInSecond));
+//            Log.v(TAG, "CurrentPos in second " + String.valueOf(mediaCurrentPositionInSecond));
             //progress the Mantra
             updateHighlightItem();
             updateCurrentPostionHandler.postDelayed(this, 1000);
-
         }
     };
+    private NotificationManager notificationManager;
+    private int notificationID;
+    private boolean doubleTapToExit = false;
 
     private void updateHighlightItem() {
         int indexOfValue = subtitlePosItemMap.indexOfValue(mediaCurrentPositionInSecond);
-        Log.v(TAG, "indexOfValue " + String.valueOf(indexOfValue));
+//        Log.v(TAG, "indexOfValue " + String.valueOf(indexOfValue));
         if (indexOfValue != -1) {
             mAdapter.setRowHighlightUpdateTracker(indexOfValue);
             mAdapter.notifyDataSetChanged();
             int storedPosition = subtitlePosItemMap.get(indexOfValue);
-            Log.v(TAG, "storedPosition " + String.valueOf(storedPosition));
+//            Log.v(TAG, "storedPosition " + String.valueOf(storedPosition));
             mWordList.smoothScrollToPosition(indexOfValue);
 //            mWordList.scrollToPosition(indexOfValue);
         }
@@ -100,14 +113,82 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Util.SDK_INT <= 23 || player == null) {
+            initializePlayer();
+            Log.v(TAG, "initializePlayer onCreate");
+        }
         initializeChapterButtons();
         initializeRecyclerView();
         findLastCompletelyVisibleItemPostionInRecyclerView();
+//        checkRunningServiceNumber();
 //        highlightItemUpdate();
     }
 
+    private void checkRunningServiceNumber() {
+        //test code to see how many service are running currently
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningServiceInfo> runningServices = manager.getRunningServices(Integer.MAX_VALUE);
+        for (int i = 0; i < runningServices.size(); i++) {
+            ActivityManager.RunningServiceInfo runningServiceInfo = runningServices.get(i);
+            Log.v(TAG,runningServiceInfo.service.getClassName());
+        }
+
+        Log.v(TAG, "BeforeServiceRunningNumber is: " + String.valueOf(runningServices.size()));
+        Log.v(TAG, "BeforeCreater: " + ActivityManager.RunningServiceInfo.CREATOR.toString());
+    }
+
+    private void startMedialPlayService() {
+        Intent startServiceIntent = new Intent(this, MediaPlayService.class);
+        startServiceIntent.setAction(Constants.ACTION.START_FOREGROUND_ACTION);
+        startService(startServiceIntent);
+    }
+
+    private void boundMediaPlayService() {
+        Intent boundServiceIntent = new Intent(this, MediaPlayService.class);
+        bindService(boundServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        boolean isBound = false;
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            MediaPlayService.MyBinder binder = (MediaPlayService.MyBinder) iBinder;
+            mediaPlayService = binder.getService();
+            isBound = true;
+            mediaPlayService.playMedia(localMediaSource());
+            Log.v(TAG, "onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.v(TAG, "onServiceDisconnected");
+            mediaPlayService = null;
+            isBound = false;
+        }
+    };
+
+    private void stopMediaPlayService() {
+        if (isForegroundMediaPlayServiceRunning(MediaPlayService.class)) {
+            Log.v(TAG, "Service is running and ready to kill it");
+            Intent stopServiceIntent = new Intent(this, MainActivity.class);
+            stopServiceIntent.setAction(Constants.ACTION.STOP_FOREGROUND_ACTION);
+            stopService(stopServiceIntent);
+            Log.v(TAG, "Service Killed");
+        }
+    }
+
+    private boolean isForegroundMediaPlayServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void initializeChapterButtons() {
-        chapterOne = findViewById(R.id.buttonOne);
+        Button chapterOne = findViewById(R.id.buttonOne);
         chapterOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 //                mediaCurrentPositionInSecond = (int) Math.round(300404 / 1000.0);
             }
         });
-        chapterTwo = findViewById(R.id.buttonTwo);
+        Button chapterTwo = findViewById(R.id.buttonTwo);
         chapterTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,28 +204,28 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        chapterThree = findViewById(R.id.buttonThree);
+        Button chapterThree = findViewById(R.id.buttonThree);
         chapterThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 player.seekTo(THIRD_ASSEMBLY_sanskrit);
             }
         });
-        chapterFour = findViewById(R.id.buttonFour);
+        Button chapterFour = findViewById(R.id.buttonFour);
         chapterFour.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 player.seekTo(FOURTH_ASSEMBLY_sanskrit);
             }
         });
-        chapterFive = findViewById(R.id.buttonFive);
+        Button chapterFive = findViewById(R.id.buttonFive);
         chapterFive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 player.seekTo(FIFTH_ASSEMBLY_sanskrit);
             }
         });
-        mantraEssence = findViewById(R.id.buttonMantraEssence);
+        Button mantraEssence = findViewById(R.id.buttonMantraEssence);
         mantraEssence.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -219,21 +300,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializePlayer() {
-        SimpleExoPlayerView playerView = findViewById(R.id.playerView);
+        PlaybackControlView playerView = findViewById(R.id.playerView);
         if (player == null) {
-            player = ExoPlayerFactory.newSimpleInstance(
-                    new DefaultRenderersFactory(this),
-                    new DefaultTrackSelector(),
-                    new DefaultLoadControl());
-
+            Renderer[] audioRenders = new Renderer[1];
+            audioRenders[0] = new MediaCodecAudioRenderer(MediaCodecSelector.DEFAULT);
+            TrackSelector audioTrackSelection = new DefaultTrackSelector();
+            player = ExoPlayerFactory.newInstance(audioRenders, audioTrackSelection);
             playerView.setPlayer(player);
-            player.setPlayWhenReady(playWhenReady);
-            player.seekTo(currentWindow, playbackPosition);
+            playerView.show();
+            player.setPlayWhenReady(true);
         }
 //        MediaSource mediaSource = buildMediaSource(Uri.parse(getString(R.string.shurangma_in_sanskrit)));//Chinese online mentra
         MediaSource mediaSource = localMediaSource();//local sanskrit
-        player.prepare(mediaSource, true, false);
-//        player.sendMessages();
+        player.prepare(mediaSource);
+
     }
 
     private MediaSource localMediaSource() {
@@ -263,46 +343,97 @@ public class MainActivity extends AppCompatActivity {
                 new DefaultExtractorsFactory(), null, null);
     }
 
+    private void notificationOnStatusBar() {
+        Log.v(TAG, "notificationOnStatusBar Media is playing");
+        Intent intent = new Intent(this, MainActivity.class);
+        int requestID = (int) System.currentTimeMillis();
+        int flag = PendingIntent.FLAG_CANCEL_CURRENT;
+        notificationID = 101;
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, requestID, intent, flag);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = "Media is playing";
+        android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(this, channelId);
+        mBuilder.setSmallIcon(R.drawable.rounded_button)
+                .setContentTitle("Player is playing")
+                .setContentText("Tap to back to the MainActivity!")
+                .setContentIntent(pendingIntent);
+        notificationManager.notify(notificationID, mBuilder.build());
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
+//        if (Util.SDK_INT <= 23 || player == null) {
+//            initializePlayer();
+//            Log.v(TAG, "initializePlayer onResume");
+//        }
         updateCurrentPostionHandler.post(updateMediaCurrentPositionRunnable);
+        Log.v(TAG, "onResume");
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (Util.SDK_INT <= 23 || player == null) {
-            initializePlayer();
-        }
+//        if (Util.SDK_INT <= 23 || player == null) {
+//            initializePlayer();
+//            Log.v(TAG, "initializePlayer onResume");
+//        }
         if (jSonStringFromAsset == null) {
 //            jSonStringFromAsset = loadJsonFromAsset(getResources().openRawResource(R.raw.lengyanzhou_xuexiban_drba_all));
             jSonStringFromAsset = loadJsonFromAsset(getResources().openRawResource(R.raw.shurangama_in_sanskrit));
             parseJsonFile(jSonStringFromAsset);
             updateCurrentPostionHandler.post(updateMediaCurrentPositionRunnable);
         }
+        Log.v(TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
-        removeAllCallBacks();
+//        if (Util.SDK_INT <= 23) {
+//            releasePlayer();
+//        }
+//        removeAllCallBacks();
+        notificationOnStatusBar();
+//        checkRunningServiceNumber();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
+//        if (Util.SDK_INT > 23) {
+//            releasePlayer();
+//        }
+//        removeAllCallBacks();
+//        checkRunningServiceNumber();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (Util.SDK_INT <= 23) {
             releasePlayer();
         }
+        notificationManager.cancel(notificationID);
         removeAllCallBacks();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (doubleTapToExit) {
+            super.onBackPressed();
+            return;
+        }
+        doubleTapToExit = true;
+        Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                doubleTapToExit = false;
+            }
+        }, 2000);
     }
 
     private void releasePlayer() {

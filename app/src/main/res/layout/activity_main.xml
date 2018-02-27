@@ -25,17 +25,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+    <com.google.android.exoplayer2.ui.PlaybackControlView
         android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline_2"
-        app:show_timeout="0"
-        app:hide_on_touch="false">
+        app:show_timeout="0">
 
-    </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
+    </com.google.android.exoplayer2.ui.PlaybackControlView>
 
     <Button
         android:id="@+id/buttonOne"
@@ -84,9 +83,9 @@
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="@android:color/white"
         android:background="@drawable/rounded_button"
         android:text="@string/chapter_4"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/buttonFive"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/buttonThree"
@@ -99,8 +98,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/rounded_button"
-        android:textColor="@android:color/white"
         android:text="@string/chapter_5"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toStartOf="@+id/buttonMantraEssence"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/buttonFour"
@@ -112,9 +111,9 @@
         android:layout_height="48dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:textColor="@android:color/white"
         android:background="@drawable/rounded_button"
         android:text="@string/mantra_essence"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/buttonFive"
